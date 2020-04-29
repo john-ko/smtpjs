@@ -1,0 +1,22 @@
+{
+  "name": "mailer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "13.13.4",
+    "jest": "25.4.0",
+    "typescript": "3.8.3"
+  },
+  "dependencies": {
+    "bunyan": "1.8.12",
+    "shortid": "2.2.15",
+    "vorpal": "1.12.0"
+  }
+}
