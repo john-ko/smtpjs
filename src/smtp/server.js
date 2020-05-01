@@ -8,13 +8,11 @@ const schema = {
     }
   },
   events: {
-    HELO: (ctx) => {
-      console.log(this.accept)
-      this.accept = false
-      console.log(ctx)
+    HELO (ctx) {
+      console.log('event', this)
     },
-    ELHO: (ctx) => {
-      console.log(this.accept)
+    EHLO (ctx) {
+      console.log('event', this.accept)
     }
   }
 }

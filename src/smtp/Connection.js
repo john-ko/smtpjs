@@ -1,11 +1,11 @@
 const parser = require('./parser/parser')
 const mailGenerator = require('./mail')
+const Schema = require('./Schema')
 
 class Connection {
   constructor (socket, options = {}) {
     this._socket = socket
-    this._schema = options.schema || {}
-    this._schema.data
+    this._schema = new Schema(options.schema || {})
     this._parse = options.parse
     this._data = false
     this._mail = mailGenerator()
@@ -36,7 +36,6 @@ class Connection {
 
     const { action, params } =  parser(line)
 
-    console.log(action)
     return this.run(action, params)
   }
 
@@ -57,8 +56,8 @@ class Connection {
   }
 
   run (action, params) {
-    if (this._schema['events'] && this._schema['events'][action]) {
-      this._schema['events'][action]({
+    if (this._schema[action]) {
+      this._schema[action]({
         action,
         params,
       })
