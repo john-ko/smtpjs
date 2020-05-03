@@ -1,7 +1,7 @@
 const net = require('net')
 
 class Client {
-  constructor (socket) {
+  constructor () {
     this._socket = new net.Socket()
     this._socket.connect(1337, '127.0.0.1', () => {
       console.log('Connected')

@@ -1,6 +1,13 @@
+const tls = require('tls')
+const fs = require('fs');
 const net = require('net')
 const Connection = require('./Connection.js')
 const shortid = require('shortid')
+
+const options = {
+  key: fs.readFileSync('test-private-key.pem'),
+  cert: fs.readFileSync('test-public-cert.pem')
+}
 
 /**
  * example usage
@@ -12,11 +19,6 @@ const shortid = require('shortid')
  *  getConnectionCount: () => {
  *    return new Promise
  *  }
- *
- *
- *
- *
- *
  * })
  */
 
@@ -28,12 +30,24 @@ class SMTPServer {
   constructor (schema = {}) {
     this._schema = schema
     this._connections = {}
-    this._server = net.createServer(this.createServer.bind(this))
+
+    const options = getOptions(schema)
+    this._server = net.createServer(options, this.createServer.bind(this))
     this._server.on('close', () => {
       console.log('connection closed')
     })
 
-    this._server.listen(1337, '127.0.0.1')
+    const port = this._schema?.config?.port ?? 1337
+    const ip = this._schema?.config?.ip ?? '127.0.0.1'
+
+    this._server.listen(port, ip)
+  }
+
+  getOptions (schema = {}) {
+    const key = schema?.config?.key
+    const cert = schema?.config?.cert
+
+    return { key, cert }
   }
 
   createServer (socket) {
@@ -59,19 +73,6 @@ class SMTPServer {
     return this._server
   }
 
-  getConnectionCount () {
-    return new Promise((resolve, reject) => {
-      this._server.getConnections((error, count) => {
-        if (error) {
-          console.log(error)
-          return reject(error)
-        }
-
-        return resolve(count)
-      })
-    })
-  }
-
   removeId (id) {
     delete this._connections[id]
   }
@@ -91,6 +92,19 @@ class SMTPServer {
 
   getMail (id) {
     return this._connections[id] && this._connections[id].getMail()
+  }
+
+  getConnectionCount () {
+    return new Promise((resolve, reject) => {
+      this._server.getConnections((error, count) => {
+        if (error) {
+          console.log(error)
+          return reject(error)
+        }
+
+        return resolve(count)
+      })
+    })
   }
 
   /* end debugging code */

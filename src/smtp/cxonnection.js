@@ -1,19 +1,18 @@
 const parser = require('./parser/parser')
 const mailGenerator = require('./mail')
-const Schema = require('./Schema')
+const Schema = require('./schema-s')
 
 class Connection {
   constructor (socket, options = {}) {
     this._socket = socket
     this._schema = new Schema(options.schema || {})
-    this._parse = options.parse
     this._data = false
     this._mail = mailGenerator()
     this._send = (message) => {
       this._socket.write(message)
     }
 
-    this._send('220 smtp.example.com Simple Mail Transfer Service Ready\r\n')
+    this._send('220 localhost Simple Mail Transfer Service Ready\r\n')
 
     this._socket.on('data', this.onData.bind(this))
     this._socket.on('close', () => {
@@ -43,7 +42,9 @@ class Connection {
     if (line === '\r\n.\r\n' || line === '.\r\n') {
       this._data = false
 
-      return this._send('250 Ok: queued as 12345')
+      console.log(this._mail.getMail())
+
+      return this._send('250 Ok: queued as 12345\r\n')
     }
 
     return this._mail.addMessage(line)
@@ -64,7 +65,7 @@ class Connection {
     }
 
     if (action === 'EHLO') {
-      return this._send('250 smtp.example.com, Hi! you sent me a EHLO')
+      return this._send('250 smtp.example.com, Hi! you sent me a EHLO\r\n')
     }
 
     if (action === 'HELO') {
@@ -84,11 +85,11 @@ class Connection {
     if (action === 'DATA') {
       // new thing we have to run
       this._data = true
-      return this._send('354 End data with <CR><LF>.<CR><LF>')
+      return this._send('354 End data with <CR><LF>.<CR><LF>\r\n')
     }
 
     if (action === 'QUIT') {
-      return this._send('221 Bye')
+      return this._send('221 Bye\r\n')
       // close connection
     }
   }
