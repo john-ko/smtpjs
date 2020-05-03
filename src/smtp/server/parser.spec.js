@@ -1,8 +1,8 @@
-const parser = require('./parser')
+const Server = require('./Server')
 
-describe('parser', () => {
+describe('Server.parser', () => {
   it('HELO relay.example.com', () => {
-    const result = parser('HELO relay.example.com')
+    const result = Server.parser('HELO relay.example.com')
     expect(result).toEqual({
       full: "HELO relay.example.com",
       action: "HELO",
@@ -11,7 +11,7 @@ describe('parser', () => {
   })
 
   it('MAIL FROM:<bob@example.com>', () => {
-    const result = parser('MAIL FROM:<bob@example.com>')
+    const result = Server.parser('MAIL FROM:<bob@example.com>')
     expect(result).toEqual({
       full: "MAIL FROM:<bob@example.com>",
       action: "MAIL FROM",
@@ -20,7 +20,7 @@ describe('parser', () => {
   })
 
   it('RCPT TO:<alice@example.com>', () => {
-    const result = parser('RCPT TO:<alice@example.com>')
+    const result = Server.parser('RCPT TO:<alice@example.com>')
     expect(result).toEqual({
       full: "RCPT TO:<alice@example.com>",
       action: "RCPT TO",
@@ -29,7 +29,7 @@ describe('parser', () => {
   })
 
   it('RCPT TO:<theboss@example.com>', () => {
-    const result = parser('RCPT TO:<theboss@example.com>')
+    const result = Server.parser('RCPT TO:<theboss@example.com>')
     expect(result).toEqual({
       full: "RCPT TO:<theboss@example.com>",
       action: "RCPT TO",
@@ -38,7 +38,7 @@ describe('parser', () => {
   })
 
   it('DATA', () => {
-    const result = parser('DATA')
+    const result = Server.parser('DATA')
     expect(result).toEqual({
       full: "DATA",
       action: "DATA",
@@ -47,7 +47,7 @@ describe('parser', () => {
   })
 
   it('QUIT', () => {
-    const result = parser('QUIT')
+    const result = Server.parser('QUIT')
     expect(result).toEqual({
       full: "QUIT",
       action: "QUIT",

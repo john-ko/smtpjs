@@ -1,13 +1,15 @@
-const SMTPServer = require('./SMTPServer.js')
-const repl = require('./repl')
+const Server = require('./src/smtp/server/Server.js')
+const repl = require('./src/smtp/repl/repl')
 
 const schema = {
+  logger: {
+    level: 'all',
+  },
   config: {
     ip: '127.0.0.1',
     port: 1337,
     key: '',
     cert: '',
-    logLevel: 'all',
   },
   data () {
     return {
@@ -28,7 +30,7 @@ const schema = {
   }
 }
 
-const server = new SMTPServer(schema)
+const server = Server.factory(schema)
 
 const replOptions = {
   getConnectionCount: () => server.getConnectionCount(),

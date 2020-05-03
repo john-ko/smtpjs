@@ -4,16 +4,16 @@ class Schema {
   constructor (schema = {}) {
     if (schema.config) {
       const config = _.cloneDeep(schema.config)
-      this.setter(config).bind(this)
+      this.setter(config)
     }
 
     if (schema.data) {
       const data = schema.data()
-      this.setter(data).bind(this)
+      this.setter(data)
     }
 
     if (schema.events) {
-      this.setter(schema.events).bind(this)
+      this.setter(schema.events)
     }
   }
 
