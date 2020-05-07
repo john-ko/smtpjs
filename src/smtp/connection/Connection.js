@@ -23,8 +23,6 @@ class Connection {
   onData (buffer) {
     const line = buffer.toString()
 
-    console.log(' - ', line)
-
     this.parse(line)
   }
 
@@ -48,9 +46,9 @@ class Connection {
     return this.mail.addMessage(line)
   }
 
-  run (action, params) {
+  async run (action, params) {
     if (this.schema[action]) {
-      this.schema[action]({
+      await this.schema[action]({
         action,
         params,
       })

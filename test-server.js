@@ -18,8 +18,14 @@ const schema = {
   },
   events: {
     HELO (ctx) {
-      console.log('HELO called')
-      this.EHLO()
+      console.log(' - promise')
+      return new Promise ((resolve, reject) => {
+        console.log(' - timeout')
+        setTimeout(() => {
+          console.log('wait 1 second')
+          resolve('done')
+        },1000)
+      })
     },
     EHLO (ctx) {
       console.log('EHLO called')
