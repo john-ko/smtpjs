@@ -7,6 +7,7 @@ const LOG_LEVELS = {
   'error': { value: 40, mapping: 'error' },
   'warn': { value: 30, mapping: 'warn' },
   'info': { value: 20, mapping: 'info' },
+  'log': { value: 20, mapping: 'log' },
   'debug': { value: 10, mapping: 'debug' },
   'all': { value: 0, mapping: 'log' },
 }
@@ -15,8 +16,9 @@ const COLOR_MAPPINGS = {
   'fatal': kleur.red().inverse,
   'error': kleur.red,
   'warn': kleur.yellow,
+  'info': kleur.green,
+  'log': kleur.green,
   'debug': kleur.magenta,
-  'info': kleur.green
 }
 
 class Logger {
@@ -33,6 +35,7 @@ class Logger {
     this.level = _.get(options, 'level', 'error')
 
     this.debug = noop
+    this.log = noop
     this.info = noop
     this.warn = noop
     this.error = noop
@@ -40,6 +43,7 @@ class Logger {
 
     const levelValue = _.get(LOG_LEVELS, `${this.level}.value`, LOG_LEVELS['fatal'].value)
 
+    // only add logging methods based on logging level
     Object.entries(LOG_LEVELS).forEach(([key, level]) => {
       if (levelValue <= level.value) {
         this[key] = (message) => {
@@ -64,12 +68,3 @@ class Logger {
 }
 
 module.exports = Logger
-
-// const log = new Logger({ level: 'all'})
-
-// log.info('info')
-// log.warn('warn')
-// log.debug('debug')
-// log.error('error')
-// log.fatal('fatal')
-// log.info({ a: true, b: 'string', c: 3})

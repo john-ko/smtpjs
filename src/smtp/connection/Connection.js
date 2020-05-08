@@ -4,6 +4,7 @@ const Schema = require('../schema/Schema')
 class Connection {
   constructor (socket, options = {}) {
     this.socket = socket
+    this.logger = options.logger
     this.schema = options.schema
     this.parser = options.parser
     this.data = false

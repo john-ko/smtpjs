@@ -4,7 +4,6 @@ class Client {
   constructor () {
     this._socket = new net.Socket()
     this._socket.connect(1337, '127.0.0.1', () => {
-      console.log('Connected')
       this._socket.write('Hello, server! Love, Client.')
     })
 

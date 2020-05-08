@@ -1,7 +1,11 @@
 const _ = require('lodash')
 
 class Schema {
-  constructor (schema = {}) {
+  constructor (schema = {}, dependencies = {}) {
+    if (dependencies.logger) {
+      this.logger = dependencies.logger
+    }
+
     if (schema.config) {
       const config = _.cloneDeep(schema.config)
       this.setter(config)
@@ -15,6 +19,13 @@ class Schema {
     if (schema.events) {
       this.setter(schema.events)
     }
+
+    const doneFn = schema.done ? schema.done.bind(this) : () => {}
+    this.done = doneFn
+
+    const errorFn = schema.error ? schema.error.bind(this) : () => {}
+    this.error = errorFn
+
   }
 
   setter (object = {}) {
@@ -27,8 +38,8 @@ class Schema {
     })
   }
 
-  static factory (schema) {
-    return new Schema(schema)
+  static factory (schema, dependencies = {}) {
+    return new Schema(schema, dependencies)
   }
 }
 

@@ -1,4 +1,4 @@
-const Logger = require('./logger')
+const Logger = require('./Logger')
 
 describe('logger', () => {
   const originalInfo = console.info

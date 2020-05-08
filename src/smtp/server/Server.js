@@ -21,8 +21,9 @@ class Server {
     this.schema = schema
     this.connections = {}
     this.server = server.createServer(serverOptions, this.createServerHandler.bind(this))
-    this.server.on('close', () => {
-      this.logger.fatal('connection failed')
+    this.server.on('close', (e) => {
+      // ? i don't even know if this event works
+      this.logger.fatal('Server connection closed', e)
     })
     this.server.listen(port, ip)
   }
@@ -52,21 +53,23 @@ class Server {
   createServerHandler (socket) {
     const id = shortid.generate()
     socket.id = id
-    const schema = Schema.factory(this.schema)
     const parser = Server.parser
-    const connection = new Connection(socket, { parser, schema })
+    const logger = this.logger
+    const schema = Schema.factory(this.schema, { logger })
+    const connection = new Connection(socket, { logger, parser, schema })
 
     this.connections[id] = connection
 
     socket.on('error', (e) => {
-      this.logger.error('error', e)
+      this.logger.error(`Connection: ${id} - encountered an error `, e)
+      schema.error(e, connection.getMail())
     })
 
     socket.on('close', (args) => {
       const id = socket.id || ''
-      this.logger.info(connection.getMail())
       this.removeId(id)
-      this.logger.info(`closed connection - ${socket.id}`)
+
+      return schema.done(connection.getMail())
     })
   }
 

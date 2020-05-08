@@ -16,22 +16,34 @@ const schema = {
       accept: true
     }
   },
+  error (error, mail) {
+    this.logger.error(error)
+    this.logger.info(mail)
+  },
+  done (mail) {
+    return new Promise((resolve, reject) => {
+      // save mail somewhere
+      this.logger.info(mail)
+
+      resolve('donzo')
+    })
+  },
   events: {
     HELO (ctx) {
-      console.log(' - promise')
+      this.logger.debug(' - promise')
       return new Promise ((resolve, reject) => {
-        console.log(' - timeout')
+        this.logger.debug(' - timeout')
         setTimeout(() => {
-          console.log('wait 1 second')
+          this.logger.info('wait 1 second')
           resolve('done')
         },1000)
       })
     },
     EHLO (ctx) {
-      console.log('EHLO called')
+      this.logger.log('EHLO called')
     },
     AUTH (ctx) {
-      console.log(ctx)
+      this.logger.log(ctx)
     }
   }
 }
