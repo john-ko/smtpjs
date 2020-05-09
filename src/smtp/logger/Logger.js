@@ -46,24 +46,30 @@ class Logger {
     // only add logging methods based on logging level
     Object.entries(LOG_LEVELS).forEach(([key, level]) => {
       if (levelValue <= level.value) {
-        this[key] = (message) => {
-          console[level.mapping](Logger.formatted(key, message))
+        this[key] = (...message) => {
+          console[level.mapping](Logger.formatted(key, ...message))
           return message
         }
       }
     })
   }
 
-  static formatted (type = '', message) {
-    if (typeof message === 'object') {
-      message = util.inspect(message, { showHidden: false, depth: 2, colors: kleur.enabled, breakLength: Number.POSITIVE_INFINITY })
-    }
+  static formatted (type = '', ...message) {
+    const msg = message.reduce((accumulator, msg) => {
+      if (typeof msg === 'object') {
+        msg = `${util.inspect(msg, { showHidden: false, depth: 2, colors: kleur.enabled, breakLength: Number.POSITIVE_INFINITY })}`
+      }
+
+      accumulator += `${msg} `
+
+      return accumulator
+    }, '')
 
     const timestamp = kleur.grey(`[${new Date().toISOString()}]`)
     const levelColor = COLOR_MAPPINGS[type]
     const level = `[${type.toUpperCase()}]`.padEnd(7)
 
-    return `${timestamp} ${levelColor(level)} - ${message}`
+    return `${timestamp} ${levelColor(level)} - ${msg}`
   }
 }
 

@@ -21,10 +21,6 @@ class Server {
     this.schema = schema
     this.connections = {}
     this.server = server.createServer(serverOptions, this.createServerHandler.bind(this))
-    this.server.on('close', (e) => {
-      // ? i don't even know if this event works
-      this.logger.fatal('Server connection closed', e)
-    })
     this.server.listen(port, ip)
   }
 
@@ -61,7 +57,6 @@ class Server {
     this.connections[id] = connection
 
     socket.on('error', (e) => {
-      this.logger.error(`Connection: ${id} - encountered an error `, e)
       schema.error(e, connection.getMail())
     })
 
@@ -69,6 +64,7 @@ class Server {
       const id = socket.id || ''
       this.removeId(id)
 
+      // todo pass connection and mail
       return schema.done(connection.getMail())
     })
   }
@@ -117,7 +113,7 @@ class Server {
     return new Promise((resolve, reject) => {
       this.server.getConnections((error, count) => {
         if (error) {
-          this.logger.fatal(error)
+          // this.logger.fatal(error)
           return reject(error)
         }
 

@@ -19,13 +19,6 @@ class Schema {
     if (schema.events) {
       this.setter(schema.events)
     }
-
-    const doneFn = schema.done ? schema.done.bind(this) : () => {}
-    this.done = doneFn
-
-    const errorFn = schema.error ? schema.error.bind(this) : () => {}
-    this.error = errorFn
-
   }
 
   setter (object = {}) {

@@ -1,6 +1,12 @@
 const mailGenerator = require('../mail/mail')
-const Schema = require('../schema/Schema')
 
+
+/**
+ * Connection
+ * client connection that handles io
+ *
+ * @class Connection
+ */
 class Connection {
   constructor (socket, options = {}) {
     this.socket = socket
@@ -8,11 +14,13 @@ class Connection {
     this.schema = options.schema
     this.parser = options.parser
     this.data = false
+    this.done = false
     this.mail = mailGenerator()
     this.send = (message) => {
       this.socket.write(message)
     }
 
+    this.schema.connect(this.socket)
     this.send('220 localhost Simple Mail Transfer Service Ready\r\n')
 
     this.socket.on('data', this.onData.bind(this))
@@ -28,26 +36,22 @@ class Connection {
   }
 
   parse (line = '') {
-    if (this.data) {
-      return this.runData(line)
-    }
-
     const { action, params } =  this.parser(line)
 
-    return this.run(action, params)
+    return this.run(line, action, params)
   }
 
   runData (line) {
     if (line === '\r\n.\r\n' || line === '.\r\n') {
       this.data = false
 
-      return this.send('250 Ok: queued as 12345\r\n')
+      return this.done = true
     }
 
     return this.mail.addMessage(line)
   }
 
-  async run (action, params) {
+  async run (line, action, params) {
     if (this.schema[action]) {
       await this.schema[action]({
         action,
@@ -82,6 +86,14 @@ class Connection {
     if (action === 'QUIT') {
       return this.send('221 Bye\r\n')
       // close connection
+    }
+
+    if (this.data) {
+      this.runData(line)
+
+      if (this.done) {
+        return this.send('250 Ok: queued as 12345\r\n')
+      }
     }
   }
 
