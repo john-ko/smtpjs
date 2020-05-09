@@ -1,4 +1,4 @@
-
+// todo add meta information
 module.exports = function () {
   const mail = {
     to: [],
