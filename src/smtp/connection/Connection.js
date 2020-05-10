@@ -1,6 +1,5 @@
 const mailGenerator = require('../mail/mail')
 
-
 /**
  * Connection
  * client connection that handles io
@@ -94,6 +93,10 @@ class Connection {
       if (this.done) {
         return this.send('250 Ok: queued as 12345\r\n')
       }
+    }
+
+    if (action === 'VRFY') {
+      return this.send('252 The recipient cannot be verified\r\n')
     }
   }
 

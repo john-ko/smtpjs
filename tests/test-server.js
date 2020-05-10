@@ -1,5 +1,5 @@
-const Server = require('./src/smtp/server/Server.js')
-const repl = require('./src/smtp/repl/repl')
+const Server = require('../src/smtp/server/Server.js')
+const repl = require('../src/smtp/repl/repl')
 
 const schema = {
   // local console logger config
@@ -12,6 +12,7 @@ const schema = {
     port: 1337,
     key: '',
     cert: '',
+    timeout: 100, // 100 seconds default
   },
   data () {
     return {

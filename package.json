@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node test-server.js",
-    "client": "node test-client.js",
-    "nodemailer": "node nodemailer.js",
+    "start": "node tests/test-server.js",
+    "client": "node tests/test-client.js",
+    "nodemailer": "node tests/nodemailer.js",
     "build": "tsc",
     "test": "jest"
   },
