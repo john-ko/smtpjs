@@ -87,6 +87,7 @@ const schema = {
 ####
 
 ## SMTP Response Codes from and it's Definition:
+```
 220 - SMTP Service ready.
 221 - Service closing.
 250 - Requested action taken and completed.
@@ -111,3 +112,4 @@ const schema = {
 554 - The transaction failed. Blame it on the weather.
 555 - The server does not recognize the email address format, and delivery is not possible.
 556 - The message would have to be forwarded, but the receiving server will reject it.
+```
