@@ -32,7 +32,8 @@ class Logger {
   constructor (options = {}) {
     const noop = () => {}
 
-    this.level = _.get(options, 'level', 'error')
+    this.level = _.get(options, 'level', 'all')
+    this.logger = _.get(options.logger) || console
 
     this.debug = noop
     this.log = noop
@@ -42,12 +43,14 @@ class Logger {
     this.fatal = noop
 
     const levelValue = _.get(LOG_LEVELS, `${this.level}.value`, LOG_LEVELS['fatal'].value)
+    console.log("Logger -> noop -> levelValue", levelValue)
+
 
     // only add logging methods based on logging level
     Object.entries(LOG_LEVELS).forEach(([key, level]) => {
       if (levelValue <= level.value) {
         this[key] = (...message) => {
-          console[level.mapping](Logger.formatted(key, ...message))
+          this.logger[level.mapping](Logger.formatted(key, ...message))
           return message
         }
       }

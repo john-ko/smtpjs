@@ -15,21 +15,23 @@ const commandsRegexStr = `^(${COMMANDS.join('|')}):? ?(.*)`
 const commandsRegex = new RegExp(commandsRegexStr)
 
 class Server {
-  constructor (schema, { logger }) {
+  constructor (schema, dependencies = {}) {
     const { serverOptions, ip, port } = this.getOptions(schema)
-    this.logger = logger
-    this.schema = schema
-    this.connections = {}
-    this.server = server.createServer(serverOptions, this.createServerHandler.bind(this))
-    this.server.listen(port, ip)
-  }
 
-  static factory (schema, dependencies = {}) {
     if (!dependencies.logger) {
       const loggerOptions = _.get(schema, 'logger', {})
       dependencies.logger = new Logger(loggerOptions)
     }
 
+    this.logger = dependencies.logger
+    this.schema = schema
+    this.connections = {}
+    this.server = server.createServer(serverOptions, this.createServerHandler.bind(this))
+    this.server.listen(port, ip)
+    this.logger.log(`Server start on ip: ${ip} port: ${port}`)
+  }
+
+  static factory (schema, dependencies = {}) {
     return new Server(schema, dependencies)
   }
 
