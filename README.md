@@ -1,8 +1,90 @@
-# mailer
+# smtpjs
 
 testing tls, included a self signed cert
 run the client with this env variable
 `NODE_TLS_REJECT_UNAUTHORIZED=0`
+
+## usage
+basic usage
+```js
+const Server = require('smtpjs')
+const server = new Server()
+// outputs >> [2020-06-22T02:39:08.611Z] [LOG]   - Server start on ip: 127.0.0.1 port: 1337
+```
+
+## options
+the 1st argument accepts a schema the second any dependencies
+```js
+const Server = require('smtpjs')
+const schema = {}
+const dependencies = {
+  logger: {...} // see `Logger Options`
+}
+
+const server = new Server(schema, dependencies)
+```
+
+### Schema
+#### events
+theres all the smtp commands that fire if defined for example the HELO command
+```js
+const schema = {
+  events: {
+    HELO (ctx) {
+      // when server receives the `HELO` it runs this code block
+      this.logger.debug(' - promise')
+      return new Promise ((resolve, reject) => {
+        this.logger.debug(' - timeout')
+        setTimeout(() => {
+          this.logger.info('wait 1 second')
+          resolve('done')
+        },1000)
+      })
+    }
+
+    // outputs on HELO
+    // [2020-06-22T03:01:21.523Z] [DEBUG] -  - promise
+    // [2020-06-22T03:01:21.523Z] [DEBUG] -  - timeout
+    // [2020-06-22T03:01:22.528Z] [INFO]  - wait 1 second
+  }
+}
+```
+
+not only are the stmp commands but there are 3 additional
+on `connect`, `error`, and `done`
+#### connect
+accepts a Socket object, which is the nodejs Socket with additional field
+`id`
+```js
+const schema = {
+  events: {
+      connect (socket) {
+      const ip = socket.remoteAddress
+      const id = socket.id
+      this.logger.log(`id: ${id} ip: ${ip}`)
+    },
+  }
+}
+```
+
+#### error
+accepts error object and the current status of the email
+
+```js
+const schema = {
+  events: {
+      error (error, mail) {
+      // log error?
+      this.logger.log('Error', error)
+
+      // still want to see what the mail is
+      this.logger.log(mail)
+    },
+  }
+}
+```
+
+####
 
 ## SMTP Response Codes from and it's Definition:
 220 - SMTP Service ready.
