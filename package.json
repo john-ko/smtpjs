@@ -21,7 +21,7 @@
   "dependencies": {
     "bunyan": "1.8.12",
     "kleur": "^3.0.3",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "shortid": "2.2.15",
     "vorpal": "1.12.0"
   }
